@@ -11,7 +11,7 @@ Segway{T}() where {T} = Segway(T)
 
 function dxdt_segway(x::AbstractVector, u::AbstractVector, seg::Segway{T} = Segway(T)) where {T<:Number}
     out = similar(x)
-    ulim = clamp(u, -one(eltype(u)), one(eltype(u)))
+    ulim = clamp.(u, -one(eltype(u)), one(eltype(u)))
 
     # calculate the wheel angular velocities
     v_left = x[6] - x[7] * seg.body.b
