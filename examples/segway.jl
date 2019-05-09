@@ -1,4 +1,4 @@
-using SegwayDyn, ForwardDiff
+using SegwayDyn
 import SegwayDyn: Body, Drive
 customtype = Float32
 
