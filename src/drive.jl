@@ -17,7 +17,7 @@ Drive{T}(; args...) where {T}= Drive(T; args...)
 """
 Input is normalised voltage [-1, 1] and rotation speed of the wheel, output is torque on the body
 """
-function (drive::Drive{T})(u::T, omega::T) where {T}
+function (drive::Drive{T})(u::Number, omega::Number) where {T}
     out = zero(T)
 
     # Motor constant
