@@ -2,7 +2,7 @@ using SegwayDyn, ForwardDiff
 customtype = Float32
 
 ## Create a custom segway
-body = SegwayDyn.Body(customtype; bend = 0.2)
+body = SegwayDyn.Body(customtype)
 drivel = SegwayDyn.Drive(customtype; cfric = 0.004)
 driver = SegwayDyn.Drive(customtype; cfric = 0.00446)
 segway = Segway(body, drivel, driver)
