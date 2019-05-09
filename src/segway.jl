@@ -19,9 +19,9 @@ function dxdt_segway(x::AbstractVector, u::AbstractVector, seg::Segway{T} = Segw
     omega_left = v_left / seg.body.R - x[5]
 
     # Calculate torque from the drives. u[1] is input tot he left wheel
-    tau = similar(u)
-    tau[1] = seg.driveleft(u[1], omega_left)
-    tau[2] = seg.driveright(u[2], omega_right)
+    taul = seg.driveleft(u[1], omega_left)
+    taur = seg.driveright(u[2], omega_right)
+    tau = [taul, taur]
 
     # Get state derivatives
     return dxdt_body(x, tau, seg.body)
