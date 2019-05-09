@@ -1,4 +1,4 @@
-module SegwayRobot
+module SegwayDyn
 
 #= State vector should be
 x[1] : x position coordinate
