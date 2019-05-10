@@ -9,11 +9,16 @@ Segway(T::DataType) = Segway{T}(Body(T), Drive(T), Drive(T))
 Segway{T}() where {T} = Segway(T)
 
 
+"""
+function dxdt_segway(x::AbstractVector, u::AbstractVector, seg::Segway{T} = Segway(T))
+Input u[1] is normalized voltage in [-1, 1] of the LEFT motor
+u[2] is normalized voltage for the RIGHT motor
+"""
 function dxdt_segway(x::AbstractVector, u::AbstractVector, seg::Segway{T} = Segway(T)) where {T<:Number}
     out = similar(x)
     ulim = clamp.(u, -one(eltype(u)), one(eltype(u)))
 
-    # calculate the wheel angular velocities
+    # calculate the wheel angular velocities, relative to the body
     v_left = x[6] - x[7] * seg.body.b
     v_right = x[6] + x[7] * seg.body.b
     omega_right = v_right / seg.body.R - x[5]
