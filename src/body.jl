@@ -51,6 +51,7 @@ end
 """
 Body dynamics, taken from Pathak2005.
 State vector is [x0, y0, phi, alpha, dalpha, v, dphi]
+Input vector is [tau_left, tau_right] (in the paper the roder is different)
 """
 @inline function dxdt_body(x::AbstractVector, u::AbstractVector, body::Body{T} = Body()) where {T<:Number}
     g = T(9.81) #N/kg
@@ -63,16 +64,32 @@ State vector is [x0, y0, phi, alpha, dalpha, v, dphi]
     dphi = x[7]
 
     # Rigid Body Dynamics
-    Dalpha = body.Mb^2*cos(alpha)^2*body.cz^2*body.R^2+((-body.Mb^2-2*body.Mw*body.Mb)*body.cz^2-2*body.Iyy*body.Mw-body.Iyy*body.Mb)*body.R^2-2*body.Mb*body.cz^2*body.Iwa-2*body.Iyy*body.Iwa
-    Galpha = (-body.Mb*body.cz^2+body.Izz-body.Ixx)*body.R^2*cos(alpha)^2 + (body.Mb*body.cz^2+body.Ixx+2*body.Iwd+2*body.b^2*body.Mw)*body.R^2+2*body.b^2*body.Iwa
-    H = 1/2*body.Mb*body.R^2*body.Izz+body.Iwa*body.Izz-body.Mw*body.R^2*body.Ixx-body.Iwa*body.Ixx-body.Mb*body.cz^2*body.Mw*body.R^2 - body.Mb*body.cz^2*body.Iwa -1/2*body.Mb*body.R^2*body.Ixx+body.Mw*body.R^2*body.Izz
-    Kalpha = (-4*body.Iyy*body.Mb*body.R^2*body.cz-3*body.R^2*body.Mb^2*body.cz^3+body.Mb*body.R^2*body.cz*(body.Ixx-body.Izz))*sin(alpha) + (body.Mb*body.R^2*body.cz*(body.Ixx-body.Izz)+body.R^2*body.Mb^2*body.cz^3)*sin(3*alpha)
-    f21 = sin(2*alpha)*dphi^2*H/Dalpha + body.Mb^2*body.cz^2*body.R^2*sin(2*alpha)*dalpha^2/(2*Dalpha) + (-2*body.Mb^2*body.R^2*body.cz-4*body.Iwa*body.Mb*body.cz-4*body.Mw*body.R^2*body.Mb*body.cz)*g*sin(alpha)/(2*Dalpha)
-    f22 = Kalpha*dphi^2+(body.Mb^2*body.cz^2*body.R^2*g*sin(2*alpha))/(2*Dalpha)+(-4*body.Iyy*body.Mb*body.R^2*body.cz-4*body.R^2*body.Mb^2*body.cz^3)*sin(alpha)*dalpha^2/(4*Dalpha)
-    f23 = (-(body.Ixx-body.Izz)*body.R^2-body.Mb*body.cz^2*body.R^2)*sin(2*alpha)*dalpha*dphi/Galpha-sin(alpha)*body.R^2*body.Mb*body.cz*v*dphi/Galpha
-    g21 = (u[1] + u[2])*(body.Mb*body.R^2+2*body.Mw*body.R^2+2*body.Iwa+body.Mb*cos(alpha)*body.cz*body.R)/Dalpha
-    g22 = -(u[1] + u[2])*body.R*(body.Mb*cos(alpha)*body.cz*body.R+body.Iyy+body.Mb*body.cz^2)/Dalpha
-    g23 = (u[1] - u[2])*body.R*body.b/Galpha
+    Dalpha = body.Mb^2*cos(alpha)^2*body.cz^2*body.R^2
+	Dalpha += ((-body.Mb^2 - 2*body.Mw*body.Mb)*body.cz^2 - 2*body.Iyy*body.Mw - body.Iyy*body.Mb)*body.R^2
+	Dalpha += -2*body.Mb*body.cz^2*body.Iwa-2*body.Iyy*body.Iwa
+
+    Galpha = (-body.Mb*body.cz^2+body.Izz-body.Ixx)*body.R^2*cos(alpha)^2
+	Galpha += (body.Mb*body.cz^2+body.Ixx+2*body.Iwd+2*body.b^2*body.Mw)*body.R^2+2*body.b^2*body.Iwa
+
+    H = 1/2*body.Mb*body.R^2*body.Izz + body.Iwa*body.Izz-body.Mw*body.R^2*body.Ixx
+	H += -body.Iwa*body.Ixx - body.Mb*body.cz^2*body.Mw*body.R^2 - body.Mb*body.cz^2*body.Iwa
+	H += -1/2*body.Mb*body.R^2*body.Ixx + body.Mw*body.R^2*body.Izz
+
+    Kalpha = (-4*body.Iyy*body.Mb*body.R^2*body.cz - 3*body.R^2*body.Mb^2*body.cz^3 + body.Mb*body.R^2*body.cz*(body.Ixx-body.Izz))*sin(alpha)
+	Kalpha += (body.Mb*body.R^2*body.cz*(body.Ixx-body.Izz) + body.R^2*body.Mb^2*body.cz^3)*sin(3*alpha)
+
+    f21 = sin(2*alpha)*dphi^2*H/Dalpha + body.Mb^2*body.cz^2*body.R^2*sin(2*alpha)*dalpha^2/(2*Dalpha)
+	f21 += (-2*body.Mb^2*body.R^2*body.cz-4*body.Iwa*body.Mb*body.cz-4*body.Mw*body.R^2*body.Mb*body.cz)*g*sin(alpha)/(2*Dalpha)
+
+    f22 = Kalpha*dphi^2+(body.Mb^2*body.cz^2*body.R^2*g*sin(2*alpha))/(2*Dalpha)
+	f22 += (-4*body.Iyy*body.Mb*body.R^2*body.cz - 4*body.R^2*body.Mb^2*body.cz^3)*sin(alpha)*dalpha^2/(4*Dalpha)
+
+    f23 = (-(body.Ixx-body.Izz)*body.R^2-body.Mb*body.cz^2*body.R^2)*sin(2*alpha)*dalpha*dphi/Galpha
+	f23 += -sin(alpha)*body.R^2*body.Mb*body.cz*v*dphi/Galpha
+
+    g21 = (u[2] + u[1])*(body.Mb*body.R^2 + 2*body.Mw*body.R^2 + 2*body.Iwa + body.Mb*cos(alpha)*body.cz*body.R)/Dalpha
+    g22 = -(u[2] + u[1]) * body.R * ( body.Mb*cos(alpha)*body.cz*body.R + body.Iyy + body.Mb*body.cz^2)/Dalpha
+    g23 = (u[2] - u[1]) * body.R * body.b / Galpha
 
     xdot = similar(x)
     xdot[1] = cos(phi)*v
