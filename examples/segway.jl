@@ -1,11 +1,10 @@
 using SegwayDyn
-import SegwayDyn: Body, Drive
 customtype = Float32
 
 ## Create a custom segway
-body = Body(customtype)
-driveleft = Drive(customtype; cfric = 0.004)
-driveright = Drive(customtype; cfric = 0.00446)
+body = SegwayDyn.Body(customtype)
+driveleft = SegwayDyn.Drive(customtype; cfric = 0.004)
+driveright = SegwayDyn.Drive(customtype; cfric = 0.0044)
 segway = Segway(body, driveleft, driveright)
 
 ## Create a time discrete PID controller for angle and position
@@ -28,7 +27,7 @@ function (pid::PID)(x::Number, dt::Number)
 end
 
 pidv = PID{customtype}(0.22, 0.0, 0.001)
-pidalpha = PID{customtype}(2.0, 0.01, 0.0)
+pidalpha = PID{customtype}(2.2, 0.8, 0.0)
 
 ## Simulate
 dt = customtype(0.01)
@@ -44,6 +43,7 @@ end
 
 ## Plot results
 using Plots
-fig = plot(layout = (2, 1))
-plot!(fig[1], X[[4, 6], :]')
-plot!(fig[2], U')
+fig = plot(layout = (3, 1))
+plot!(fig[1], X[[4, 6], :]', lab = ["alpha"  "v"])
+plot!(fig[2], X[[3, 7], :]', lab = ["phi"  "dphi"])
+plot!(fig[3], U', lab = "u")
