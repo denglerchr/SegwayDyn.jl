@@ -3,8 +3,8 @@ customtype = Float32
 
 ## Create a custom segway
 body = SegwayDyn.Body(customtype)
-driveleft = SegwayDyn.Drive(customtype; cfric = 0.004)
-driveright = SegwayDyn.Drive(customtype; cfric = 0.0044)
+driveleft = SegwayDyn.Drive(customtype)
+driveright = SegwayDyn.Drive(customtype)
 segway = Segway(body, driveleft, driveright)
 
 ## Create a time discrete PID controller for angle and position
