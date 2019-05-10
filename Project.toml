@@ -1,4 +1,4 @@
 name = "SegwayDyn"
 uuid = "2e0893f2-6214-5ff9-9a74-f1ecb49f67c6"
 authors = ["Christian Dengler"]
-version = "0.1.0"
+version = "0.1.1"
