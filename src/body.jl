@@ -24,9 +24,7 @@ struct Body{T}
     Iwd::T # kg m^2 #Inertia of the wheels about a diameter
 end
 
-
 Body{T}() where T = Body(T)
-
 
 function Body(T::DataType = Float64;
 	Mb = 1.76,
@@ -51,7 +49,7 @@ end
 """
 Body dynamics, taken from Pathak2005.
 State vector is [x0, y0, phi, alpha, dalpha, v, dphi]
-Input vector is [tau_left, tau_right] (in the paper the roder is different)
+Input vector is [tau_left, tau_right] (in the paper the order is different)
 """
 @inline function dxdt_body(x::AbstractVector, u::AbstractVector, body::Body{T} = Body()) where {T<:Number}
     g = T(9.81) #N/kg
@@ -139,5 +137,5 @@ function body_rk4!(xt::AbstractVector, ut::AbstractVector, dt::Number, body::Bod
     else
         xt .+= temp
     end
-    return nothing
+    return xt
 end
