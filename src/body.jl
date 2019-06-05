@@ -51,7 +51,7 @@ Body dynamics, taken from Pathak2005.
 State vector is [x0, y0, phi, alpha, dalpha, v, dphi]
 Input vector is [tau_left, tau_right] (in the paper the order is different)
 """
-@inline function dxdt_body(x::AbstractVector, u::AbstractVector, body::Body{T} = Body()) where {T<:Number}
+@inline function dxdt_body!(xdot::AbstractVector, x::AbstractVector, u::AbstractVector, body::Body{T} = Body()) where {T<:Number}
     g = T(9.81) #N/kg
 
     # Rename variables
@@ -89,7 +89,6 @@ Input vector is [tau_left, tau_right] (in the paper the order is different)
     g22 = -(u[2] + u[1]) * body.R * ( body.Mb*cos(alpha)*body.cz*body.R + body.Iyy + body.Mb*body.cz^2)/Dalpha
     g23 = (u[2] - u[1]) * body.R * body.b / Galpha
 
-    xdot = similar(x)
     xdot[1] = cos(phi)*v
     xdot[2] = sin(phi)*v
     xdot[3] = x[7]
@@ -99,6 +98,11 @@ Input vector is [tau_left, tau_right] (in the paper the order is different)
     xdot[7] = f23 + g23
 
     return xdot
+end
+
+@inline function dxdt_body(x::AbstractVector, u::AbstractVector, body::Body{T} = Body()) where {T<:Number}
+    xdot = similar(x)
+    return dxdt_body!(xdot, x, u, body)
 end
 
 # Should not really be used

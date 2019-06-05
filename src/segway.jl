@@ -15,7 +15,7 @@ Input u[1] is normalized voltage in [-1, 1] of the LEFT motor
 u[2] is normalized voltage for the RIGHT motor
 """
 function dxdt_segway(x::AbstractVector, u::AbstractVector, seg::Segway{T} = Segway(T)) where {T<:Number}
-    out = similar(x)
+    dxdt = similar(x)
     ulim = clamp.(u, -one(eltype(u)), one(eltype(u)))
 
     # calculate the wheel angular velocities, relative to the body
@@ -25,12 +25,15 @@ function dxdt_segway(x::AbstractVector, u::AbstractVector, seg::Segway{T} = Segw
     omega_left = v_left / seg.body.R - x[5]
 
     # Calculate torque from the drives. u[1] is input tot he left wheel
-    taul = seg.driveleft(ulim[1], omega_left)
-    taur = seg.driveright(ulim[2], omega_right)
+    taul = seg.driveleft(x[8], omega_left)
+    taur = seg.driveright(x[9], omega_right)
     tau = [taul, taur]
 
     # Get state derivatives
-    return dxdt_body(x, tau, seg.body)
+    dxdt_body!( view(dxdt, 1:7), x[1:7], tau, seg.body)
+    dxdt[8] = (ulim[1] - x[8]) / seg.driveleft.T
+    dxdt[9] = (ulim[2] - x[9]) / seg.driveright.T
+    return dxdt
 end
 
 

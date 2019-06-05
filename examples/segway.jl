@@ -32,8 +32,8 @@ pidalpha = PID{customtype}(2.2, 0.8, 0.01)
 ## Simulate
 dt = customtype(0.01)
 t = 0:dt:10
-X = zeros(customtype, 7, length(t))
-x0 = zeros(customtype, 7); x0[4] = 2*pi/180; x0[7] = 0.01
+X = zeros(customtype, 9, length(t))
+x0 = zeros(customtype, 9); x0[4] = 2*pi/180; x0[7] = 0.01
 X[:, 1] .= x0
 U = zeros(customtype, 2, length(t))
 for i = 2:length(t)
