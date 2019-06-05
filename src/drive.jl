@@ -11,7 +11,7 @@ struct Drive{S}
     T::S # Timeconstant of PT1
 end
 
-Drive(S::DataType; kl = 0.138, kh = 0.465, bend = 0.06367, cfric = 0.0074, T = 0.01) = Drive{S}(S(kl), S(kh), S(bend), S(cfric), S(T))
+Drive(S::DataType; kl = 0.533, kh = 0.969, bend = 0.11, cfric = 0.009, T = 0.0208) = Drive{S}(S(kl), S(kh), S(bend), S(cfric), S(T))
 Drive{S}(; args...) where {S}= Drive(S; args...)
 
 
