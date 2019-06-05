@@ -10,7 +10,7 @@ struct Drive{T}
     cfric::T # Visouc friction + motor induction
 end
 
-Drive(T::DataType; kl = 0.206, kh = 0.3, bend = 0.1, cfric = 0.0065) = Drive{T}(T(kl), T(kh), T(bend), T(cfric))
+Drive(T::DataType; kl = 0.138, kh = 0.465, bend = 0.06367, cfric = 0.0074) = Drive{T}(T(kl), T(kh), T(bend), T(cfric))
 Drive{T}(; args...) where {T}= Drive(T; args...)
 
 
