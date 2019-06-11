@@ -5,7 +5,7 @@ struct Segway{T}
 end
 
 
-Segway(T::DataType) = Segway{T}(Body(T), Drive(T), Drive(T))
+Segway(T::DataType = Float64) = Segway{T}(Body(T), Drive(T), Drive(T))
 Segway{T}() where {T} = Segway(T)
 
 
