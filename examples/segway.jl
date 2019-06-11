@@ -26,8 +26,8 @@ function (pid::PID)(x::Number, dt::Number)
     return pid.P * x + pid.I * pid.int_temp + pid.D * diffx
 end
 
-pidv = PID{customtype}(0.22, 0.01, 0.001)
-pidalpha = PID{customtype}(2.2, 0.8, 0.01)
+pidv = PID{customtype}(0.1, 0.01, 0.001)
+pidalpha = PID{customtype}(3.0, 0.0, 0.03)
 
 ## Simulate
 dt = customtype(0.01)
