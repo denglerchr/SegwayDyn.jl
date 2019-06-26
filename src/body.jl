@@ -62,18 +62,18 @@ Input vector is [tau_left, tau_right] (in the paper the order is different)
     dphi = x[7]
 
     # Rigid Body Dynamics
-    Dalpha = body.Mb^2*cos(alpha)^2*body.cz^2*body.R^2
+    Dalpha::T = body.Mb^2*cos(alpha)^2*body.cz^2*body.R^2
 	Dalpha += ((-body.Mb^2 - 2*body.Mw*body.Mb)*body.cz^2 - 2*body.Iyy*body.Mw - body.Iyy*body.Mb)*body.R^2
 	Dalpha += -2*body.Mb*body.cz^2*body.Iwa-2*body.Iyy*body.Iwa
 
-    Galpha = (-body.Mb*body.cz^2+body.Izz-body.Ixx)*body.R^2*cos(alpha)^2
+    Galpha::T = (-body.Mb*body.cz^2+body.Izz-body.Ixx)*body.R^2*cos(alpha)^2
 	Galpha += (body.Mb*body.cz^2+body.Ixx+2*body.Iwd+2*body.b^2*body.Mw)*body.R^2+2*body.b^2*body.Iwa
 
-    H = 1/2*body.Mb*body.R^2*body.Izz + body.Iwa*body.Izz-body.Mw*body.R^2*body.Ixx
+    H::T = T(1/2)*body.Mb*body.R^2*body.Izz + body.Iwa*body.Izz-body.Mw*body.R^2*body.Ixx
 	H += -body.Iwa*body.Ixx - body.Mb*body.cz^2*body.Mw*body.R^2 - body.Mb*body.cz^2*body.Iwa
-	H += -1/2*body.Mb*body.R^2*body.Ixx + body.Mw*body.R^2*body.Izz
+	H += -T(1/2)*body.Mb*body.R^2*body.Ixx + body.Mw*body.R^2*body.Izz
 
-    Kalpha = (-4*body.Iyy*body.Mb*body.R^2*body.cz - 3*body.R^2*body.Mb^2*body.cz^3 + body.Mb*body.R^2*body.cz*(body.Ixx-body.Izz))*sin(alpha)
+    Kalpha::T = (-4*body.Iyy*body.Mb*body.R^2*body.cz - 3*body.R^2*body.Mb^2*body.cz^3 + body.Mb*body.R^2*body.cz*(body.Ixx-body.Izz))*sin(alpha)
 	Kalpha += (body.Mb*body.R^2*body.cz*(body.Ixx-body.Izz) + body.R^2*body.Mb^2*body.cz^3)*sin(3*alpha)
 
     f21 = sin(2*alpha)*dphi^2*H/Dalpha + body.Mb^2*body.cz^2*body.R^2*sin(2*alpha)*dalpha^2/(2*Dalpha)
