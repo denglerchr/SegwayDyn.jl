@@ -1,12 +1,7 @@
 #Can use this to linearisze the model, in case one wants to design a linear controller
 using SegwayDyn
-using ForwardDiff
 
-seg = Segway(Float64)
-A = ForwardDiff.jacobian(x->dxdt_segway(x, zeros(2), seg), zeros(7))
-@show A
-
-#B = ForwardDiff.jacobian(u->dxdt_segway(zeros(7), u, seg), zeros(2)) #some type problem
+seg = SegwayDyn.Segway(Float64)
 
 function myjacobian(fun, x)
     deriv = Array{Vector}(undef, 0)
@@ -20,6 +15,6 @@ function myjacobian(fun, x)
     return hcat(deriv...)
 end
 
-B = myjacobian(u->dxdt_segway(zeros(7), u, seg), zeros(2))
-@show B
+A = myjacobian(x->SegwayDyn.dxdt_segway(x, zeros(2), seg), zeros(9))
+B = myjacobian(u->SegwayDyn.dxdt_segway(zeros(9), u, seg), zeros(2))
 nothing

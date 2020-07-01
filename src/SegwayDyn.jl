@@ -1,5 +1,7 @@
 module SegwayDyn
 
+using OrdinaryDiffEq
+
 #= State vector should be
 x[1] : x position coordinate
 x[2] : y position coordinate
@@ -17,6 +19,9 @@ include("body.jl")
 include("drive.jl")
 include("segway.jl")
 export Segway
-export segway_rk4, segway_rk4!, dxdt_segway
+export segway_rk4, segway_rk4!
+
+include("disc_sim.jl")
+export dxdt_segway, segway_odestep
 
 end # module SegwayRoboter

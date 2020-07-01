@@ -4,31 +4,25 @@ Friction is modeled as visous friction. Motor constant is assumed not constant, 
 (There is a bend in the characteristic curve).
 """
 struct Drive{S}
-    kl::S # motor constant at low input voltages
-    kh::S # motor constant at higehr input voltages
-    bend::S # "Voltage" at which motor "constant" changes (must be in [0, 1])
-    cfric::S # Visouc friction + motor induction
-    T::S # Timeconstant of PT1
+    km::S # motor torque constant
+    kw::S # Counter emf
+    cfric1::S #friction aprameter
+    cfric2::S #friction aprameter
+    cfric3::S #friction aprameter
 end
 
-Drive(S::DataType; kl = 0.533, kh = 0.969, bend = 0.11, cfric = 0.0095, T = 0.0208) = Drive{S}(S(kl), S(kh), S(bend), S(cfric), S(T))
+Drive(S::DataType; km = 0.61, kw = 0.018131147540983605, cfric1 = 0.24, cfric2 = 2.0, cfric3 = 0.4) = Drive{S}(S(km), S(kw), S(cfric1), S(cfric2), S(cfric3))
 Drive{S}(; args...) where {S}= Drive(S; args...)
 
 
 """
 Input is normalised voltage [-1, 1] and rotation speed of the wheel, output is torque on the body
 """
-function (drive::Drive{S})(u::Number, omega::Number) where {S}
-    out = zero(S)
+function (drive::Drive{S})(i::Number, omega::Number) where {S}
+    # Constant * current
+    tau = drive.km*i
 
-    # Motor constant
-    if abs(u) < drive.bend
-        out += drive.kl*u
-    else
-        out += sign(u)*( drive.kl*drive.bend + drive.kh*( abs(u) - drive.bend ) )
-    end
-
-    # Friction and motor induction
-    out -= drive.cfric*omega
-    return out
+    # Friction (Coulomb+viscous)
+    tau -= drive.cfric1*tanh(drive.cfric2*omega)*exp(-drive.cfric3*omega^2)
+    return tau
 end

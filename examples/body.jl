@@ -1,6 +1,6 @@
 using SegwayDyn
 
-body = SegwayDyn.Body(Float32; cz = 0.72) # same as Body(Float32)
+body = SegwayDyn.Body(Float32; cz = 0.07)
 
 x0 = randn(Float32, 7)
 u0 = randn(Float32, 2)
